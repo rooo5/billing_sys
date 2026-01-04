@@ -1,24 +1,23 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
 Things you may want to cover:
 
-* Ruby version
+* Ruby version: 3.1.6
 
-* System dependencies
+* Rails Version: 7.2.3
 
-* Configuration
+STEPS
 
-* Database creation
+1. CLone the project.
 
-* Database initialization
+2. run 'bundle i' to install the gems.
 
-* How to run the test suite
+3. run 'rails db:create db:migrate db:seed' to setup the database.
 
-* Services (job queues, cache servers, search engines, etc.)
+4. run 'rails s' to start the server.
 
-* Deployment instructions
+NOTES:
 
-* ...
+* For Mailer to work please create .env file and add credentials in development.rb(local server).
+
+* If your project is in 'OneDrive/' directory please move the project out of it or run this commands 'rails tem:cache:clear' and 'rails tem:clear' then restart the sever. This PROBLEM occurs because OneDrive tries to constantly sync the file so best practice is to move the project from OneDrive directory.
