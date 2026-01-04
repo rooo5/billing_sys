@@ -1,0 +1,78 @@
+<h1>Billing Page</h1>
+
+<%= form_with url: purchases_path, method: :post do |f| %>
+
+  <label>Email</label><br>
+  <%= f.email_field :email, required: true, style: "width: 20%;", placeholder: "Enter email" %>
+
+  <h3>Products</h3>
+
+  <div id="items">
+    <div class="item">
+      <select id = "product-option" name="items[][product_id]" onchange="updateMaxQty(this); calculateTotal()" required>
+        <option value="">Select Product</option>
+        <% @products.each do |p| %>
+          <% next if p.stock <= 0 %>
+          <option value="<%= p.id %>" data-price="<%= p.price %>" data-tax="<%= p.tax_percentage %>" data-stock="<%= p.stock %>">
+            <%= p.name %> (₹<%= p.price %>, Stock: <%= p.stock %>)
+          </option>
+        <% end %>
+      </select>
+
+      <input id= "number-quntity" type="number" name="items[][quantity]" min="1" placeholder="Quantity" oninput="calculateTotal()" required>
+      <button type="button" onclick="removeItem(this)">❌</button>
+    </div>
+  </div>
+
+  <button type="button" onclick="addItem()">Add Product</button>
+
+  <hr>
+
+  <h3>Cash Paid by Customer</h3>
+
+  <% @denominations.each do |d| %>
+    <div>
+      ₹<%= d.value %>
+      <input type="number" min="0" value="0" name="denominations[][count]" data-value="<%= d.value %>" oninput="calculatePaidAmount()" style="width: 10%;">
+      <input type="hidden" name="denominations[][id]" value="<%= d.id %>">
+    </div>
+  <% end %>
+
+  <p><strong>Paid Amount: ₹<span id="paid_amount">0.00</span></strong></p>
+  <p><strong>Total Bill: ₹<span id="total">0.00</span></strong></p>
+
+  <br>
+  <%= f.submit "Generate Bill" %>
+<% end %>
+
+
+<script>
+function calculateTotal() {
+  let total = 0;
+
+  document.querySelectorAll(".item").forEach(item => {
+    const select = item.querySelector("select");
+    const qty = item.querySelector("input").value;
+
+    if (!select.value || !qty) return;
+
+    const price = parseFloat(select.selectedOptions[0].dataset.price);
+    const tax = parseFloat(select.selectedOptions[0].dataset.tax);
+    const base = price * qty;
+
+    total += base + (base * tax / 100);
+  });
+
+  document.getElementById("total").innerText = total.toFixed(2);
+}
+
+function calculatePaidAmount() {
+  let paid = 0;
+
+  document.querySelectorAll("[data-value]").forEach(input => {
+    paid += parseInt(input.dataset.value) * parseInt(input.value || 0);
+  });
+
+  document.getElementById("paid_amount").innerText = paid.toFixed(2);
+}
+</script>

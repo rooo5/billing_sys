@@ -1,0 +1,36 @@
+<h1>Invoice for Your Purchase</h1>
+
+<p>Hi <%= @purchase.customer.email %>,</p>
+
+<p>Thank you for your purchase. Here are the details:</p>
+
+<table border="1" cellpadding="4" style="border-collapse: collapse; width: 100%;">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Unit Price</th>
+      <th>Tax</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @items.each do |item| %>
+      <tr>
+        <td><%= item.product.name %></td>
+        <td><%= item.quantity %></td>
+        <td>₹<%= item.unit_price %></td>
+        <td>₹<%= item.tax_amount %></td>
+        <td>₹<%= item.total_price %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<p><strong>Total without tax:</strong> ₹<%= @total_without_tax %></p>
+<p><strong>Total tax:</strong> ₹<%= @total_tax %></p>
+<p><strong>Net total:</strong> ₹<%= @net_total %></p>
+<p><strong>Paid Amount:</strong> ₹<%= @purchase.paid_amount %></p>
+<p><strong>Balance/Change:</strong> ₹<%= @purchase.balance_amount %></p>
+
+<h3>Thank you for your purchase!</h3>

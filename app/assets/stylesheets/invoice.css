@@ -1,0 +1,18 @@
+.top-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.btn-back {
+    text-decoration: none;
+    padding: 8px 14px;
+    background-color: #22c55e;
+    color: white;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.btn-back:hover {
+    background-color: #16a34a;
+}

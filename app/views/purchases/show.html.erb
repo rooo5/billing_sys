@@ -1,0 +1,88 @@
+<div class="top-actions">
+  <%= link_to "New Purchase", new_purchase_path, class: "btn-back" %>
+</div>
+
+<h2 style="text-align:center">Billing Page</h2>
+
+<p>
+  <strong>Customer Email:</strong>
+  <%= @purchase.customer.email %>
+</p>
+
+<hr>
+
+<h3>Bill Section</h3>
+
+<table border="1" width="100%" cellpadding="6">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Unit Price</th>
+      <th>Quantity</th>
+      <th>Purchase Price</th>
+      <th>Tax %</th>
+      <th>Tax Payable</th>
+      <th>Total Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @items.each do |item| %>
+      <tr>
+        <td><%= item.product.name %></td>
+        <td>₹<%= item.unit_price %></td>
+        <td><%= item.quantity %></td>
+        <td>₹<%= item.unit_price * item.quantity %></td>
+        <td><%= item.product.tax_percentage %>%</td>
+        <td>₹<%= item.tax_amount %></td>
+        <td>₹<%= item.total_price %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<div style="width:40%; float:right">
+  <p>Total price without tax: ₹<%= @total_without_tax %></p>
+  <p>Total tax payable: ₹<%= @total_tax %></p>
+  <p>Net price of the purchased item: ₹<%= @net_total %></p>
+  <p><strong>Rounded down value:</strong> ₹<%= @rounded_total %></p>
+  <p><strong>Balance payable to the customer:</strong> ₹<%= @balance %></p>
+</div>
+
+<div style="clear:both"></div>
+
+<hr>
+
+<h3 style="text-align:center">Balance Denomination</h3>
+
+<table align="center" cellpadding="4" style="width: 200px; text-align:center; border-collapse: collapse;">
+  <% @change_denominations.each do |pd| %>
+    <tr>
+      <td style="text-align:right; padding-right:5px;">₹<%= pd.denomination.value %></td>
+      <td style="padding: 0 5px;">:</td>
+      <td style="text-align:left; padding-left:5px;"><%= pd.count %></td>
+    </tr>
+  <% end %>
+</table>
+
+<style>
+  .top-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+
+  .btn-back {
+    text-decoration: none;
+    padding: 8px 14px;
+    background-color: #22c55e;
+    color: white;
+    border-radius: 4px;
+    font-weight: bold;
+  }
+
+  .btn-back:hover {
+    background-color: #16a34a;
+  }
+</style>
