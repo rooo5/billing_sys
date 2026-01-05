@@ -122,4 +122,25 @@ class PurchasesController < ApplicationController
     @change_denominations =
       @purchase.purchase_denominations.where(direction: "out")
   end
+
+  def customer_purchases
+    customer = Customer.find_by(email: params[:email])
+    if customer
+      purchases = customer.purchases.order(created_at: :desc)
+      render json: purchases.as_json(
+        only: [ :id, :total_amount, :paid_amount, :balance_amount, :created_at ]
+      )
+    else
+      render json: []
+    end
+  end
+
+  def purchase_items
+    purchase = Purchase.includes(purchase_items: :product).find(params[:id])
+    items = purchase.purchase_items
+    render json: items.as_json(
+      only: [ :quantity, :unit_price, :tax_amount, :total_price ],
+      include: { product: { only: [ :name ] } }
+    )
+  end
 end

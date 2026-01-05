@@ -3,7 +3,11 @@
 <%= form_with url: purchases_path, method: :post do |f| %>
 
   <label>Email</label><br>
-  <%= f.email_field :email, required: true, style: "width: 20%;", placeholder: "Enter email" %>
+  <%= f.email_field :email, required: true, style: "width: 20%;", placeholder: "Enter email", id: "customer_email" %>
+  <button type="button" onclick="loadCustomerPurchases()">Purchase History</button>
+
+  <div id="purchase_history" style="margin-top: 10px;"></div>
+  <div id="previous_items" style="margin-top: 10px;"></div>
 
   <h3>Products</h3>
 
@@ -113,4 +117,65 @@ function calculatePaidAmount() {
 
   calculateBalance();
 }
+
+function loadCustomerPurchases() {
+  const email = document.getElementById("customer_email").value;
+  if (!email) return alert("Enter customer email");
+
+  fetch(`/customer_purchases?email=${encodeURIComponent(email)}`)
+    .then(r => r.json())
+    .then(purchases => {
+      const container = document.getElementById("purchase_history");
+      container.innerHTML = "";
+      const prevItems = document.getElementById("previous_items");
+      prevItems.innerHTML = "";
+
+      if (purchases.length === 0) {
+        container.innerHTML = "<p>No previous purchases found.</p>";
+        return;
+      }
+
+      const table = document.createElement("table");
+      table.border = 1;
+      table.cellPadding = 4;
+      table.style.width = "100%";
+      table.innerHTML = `<tr>
+        <th>Purchase ID</th><th>Total</th><th>Paid</th><th>Balance</th><th>Date</th><th>Action</th>
+      </tr>`;
+
+      purchases.forEach(p => {
+        const row = table.insertRow();
+        row.innerHTML = `
+          <td>${p.id}</td>
+          <td>₹${p.total_amount}</td>
+          <td>₹${p.paid_amount}</td>
+          <td>₹${p.balance_amount}</td>
+          <td>${new Date(p.created_at).toLocaleString()}</td>
+          <td><button type="button" onclick="showPurchaseItems(${p.id})">View Items</button></td>
+        `;
+      });
+
+      container.appendChild(table);
+    });
+}
+
+function showPurchaseItems(purchaseId) {
+  fetch(`/purchase_items/${purchaseId}`)
+    .then(r => r.json())
+    .then(items => {
+      let html = '<h4>Items in Purchase</h4>';
+      html += '<table border="1" cellpadding="4"><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr>';
+      items.forEach(item => {
+        html += `<tr>
+          <td>${item.product.name}</td>
+          <td>${item.quantity}</td>
+          <td>₹${item.unit_price}</td>
+          <td>₹${item.total_price}</td>
+        </tr>`;
+      });
+      html += '</table>';
+      document.getElementById("previous_items").innerHTML = html;
+    });
+}
+
 </script>
